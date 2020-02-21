@@ -2,6 +2,18 @@ import cv2
 import os
 import numpy as np
 
+
+def calculate_error(components: dict) -> list:
+    """
+    We could add a new attribute - angles to turn for each object
+    Just return a list of objects and angles to turn
+    :param components: detected components
+    :return:
+    """
+
+    pass
+
+
 class ResultsManager:
     """
     Class performing BBs drawing, saving objects to disk

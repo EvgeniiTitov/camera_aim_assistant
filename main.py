@@ -39,11 +39,14 @@ class AimAssistant:
             components = self.components_detector.predict(image=frame,
                                                           pole_predictions=poles)
 
+            # Might not need to do it. Just send components
             detected_objects = {**poles, **components}
 
             if detected_objects:
+                # Won't be drawing BBs. Remove after testing
                 self.results_manager.draw_bbs(objects_detected=detected_objects,
                                               image=frame)
+
 
             cv2.imshow("frame", frame)
 
@@ -68,3 +71,8 @@ if __name__ == "__main__":
     video_capture = cv2.VideoCapture(path_to_data)
 
     AimAssistant().assist(video_capture)
+
+    # TODO: Interfaces. What triggers it and how
+    # TODO: What it returns. It needs to be a generator right? To get predictions for each frame
+    # TODO: Actual angle calculating algorithm
+    # TODO: What to do if multiple objects detected? Camera needs to do it one by one? (Hovers in place?), mark chosen object? (tracking, too complicated)
