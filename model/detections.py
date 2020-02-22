@@ -2,7 +2,6 @@ class DetectedObject:
     """
     Represents an object detected. Keeps its coordinates, class ID, confidence score
     """
-
     def __init__(
             self,
             class_id,
@@ -21,6 +20,9 @@ class DetectedObject:
         self.BB_left = left
         self.BB_right = right
         self.BB_bottom = bottom
+
+        self.BB_centre = None
+        self.angle_to_get_captured = None
 
         # Another set of coordinates to modify BBs of objects detected to achieve certain
         # things. For instance, to address an issue of insulators sticking out and not getting
@@ -69,7 +71,6 @@ class SubImage:
     whole full size image. Block 2 neural net does detection on the objects found
     by the block1 nets. We need this referencing for proper result handling at the end
     """
-
     def __init__(
             self,
             frame,
@@ -91,7 +92,7 @@ class SubImage:
     ):
         """
         When it comes to drawing BBs and saving objects detected in order to do so with
-        the components, we need to know their relative positive relatively not to the
+        the components, we need to know their position relatively not to the
         original image, but rather to the image section on which they were detected - on poles
         """
         self.top = top

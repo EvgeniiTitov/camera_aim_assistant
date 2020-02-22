@@ -3,16 +3,54 @@ import os
 import numpy as np
 
 
-def calculate_error(components: dict) -> list:
+def calculate_angles(
+        components: dict,
+        frame: np.ndarray
+) -> None:
     """
-    We could add a new attribute - angles to turn for each object
-    Just return a list of objects and angles to turn
     :param components: detected components
     :return:
     """
+    frame_centre = (frame.shape[1] // 2, frame.shape[0] // 2)  # x,y
 
-    pass
+    for image_section, elements in components.items():
 
+        for element in elements:
+            # Convert element's coordinates to absolute (now they are relative to the
+            # object within which they were detected (if any, else already absolute)
+            element_absolute_top = image_section.top + element.BB_top
+            element_absolute_bot = image_section.top + element.BB_bottom
+            element_absolute_left = image_section.left + element.BB_left
+            element_absolute_right = image_section.left + element.BB_right
+
+            # cv2.rectangle(frame,
+            #               (element_absolute_left, element_absolute_top),
+            #               (element_absolute_right, element_absolute_bot),
+            #               (0, 165, 255), 5)
+
+            # Calculate element's BB centre relatively to the whole image
+            element_x_centre = (element_absolute_right + element_absolute_left) // 2
+            element_y_centre = (element_absolute_bot + element_absolute_top) // 2
+
+            # cv2.circle(frame,
+            #            (element_x_centre, element_y_centre),
+            #            5, (0, 165, 255), thickness=8)
+
+            # Calculate delta (image centre vs element centre)
+            delta_x = abs(frame_centre[0] - element_x_centre)
+            delta_y = abs(frame_centre[1] - element_y_centre)
+
+            # Line from image centre to each element
+            # cv2.line(frame,
+            #          frame_centre,
+            #          (element_x_centre, element_y_centre),
+            #          (0, 165, 255), thickness=8)
+
+            angle_1 = round(np.rad2deg(np.arctan2(delta_x, delta_y)), 2)
+            angle_2 = round(90 - angle_1, 2)
+
+            element.BB_centre = (int(element_x_centre), int(element_y_centre))
+            element.angle_to_get_captured = (angle_1, angle_2)
 
 class ResultsManager:
     """
@@ -83,6 +121,33 @@ class ResultsManager:
                             (element.left + image_section.left, top),
                             cv2.FONT_HERSHEY_SIMPLEX, self.line_text_size(image)[1],
                             (0, 0, 0), self.line_text_size(image)[-1])
+
+    def check_aim_assistance(
+            self,
+            components,
+            image
+    ):
+        colour = (0, 165, 255)
+        image_centre = (image.shape[1] // 2, image.shape[0] // 2)  # x,y
+
+        # draw axis
+        cv2.line(image, (image.shape[1] // 2, 0), (image.shape[1] // 2, image.shape[0]),
+                 (3, 248, 252), thickness=3)
+        cv2.line(image, (0, image.shape[0] // 2), (image.shape[1], image.shape[0] // 2),
+                 (3, 248, 252), thickness=3)
+
+        # point at image centre
+        cv2.circle(image, image_centre, 5, colour, thickness=8)
+
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        for image_section, elements in components.items():
+            for element in elements:
+                #cv2.circle(image, element.BB_centre, 6, colour, 8)
+                cv2.line(image, image_centre, element.BB_centre, (244, 3, 252), 5)
+                cv2.putText(image, str(element.angle_to_get_captured),
+                            element.BB_centre, font, 4, (255, 255, 255), 2, cv2.LINE_AA)
+
+        #(str(e) for e in element.angle_to_get_captured)
 
     def save_objects_detected(
             self,

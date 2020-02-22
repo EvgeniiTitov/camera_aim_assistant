@@ -59,8 +59,6 @@ class YOLOv3:
         :return:
         """
 
-        # TO CONFIRM: YOLO is invariant to the size of the input image.
-        # Do we really need it?
         img = self.preprocess_image(img=image,
                                     inp_dim=self.input_dimension)
 
@@ -308,6 +306,8 @@ class YOLOv3:
         """
 
         img_w, img_h = img.shape[1], img.shape[0]
+        #print(type(img))
+
         w, h = inp_dim
         new_w = int(img_w * min(w / img_w, h / img_h))
         new_h = int(img_h * min(w / img_w, h / img_h))

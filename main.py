@@ -1,6 +1,6 @@
 from model import YOLOv3
 from model import ComponentsDetector, PolesDetector
-from utils import ResultsManager
+from utils import ResultsManager, calculate_angles
 import cv2
 
 
@@ -17,62 +17,82 @@ class AimAssistant:
 
         self.results_manager = ResultsManager()
 
-    def assist(self, cap):
+    def assist(
+            self,
+            cap=None,
+            image=None
+    ):
         """
         Needs to be a generator?
         :return:
         """
+        if image is None:
+            if not cap.isOpened():
+                raise IOError("Failed to open the cap")
 
-        if not cap.isOpened():
-            raise IOError("Failed to open the cap")
+        cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
 
         while 1:
 
             # TODO: Might take a lot of time, consider threading to decode frames in advance
-            try:
-                has_frame, frame = cap.read()
-            except:
-                raise IOError("Failed to decode a frame")
+            if cap:
+                try:
+                    has_frame, frame = cap.read()
+                except:
+                    raise IOError("Failed to decode a frame")
+            else:
+                frame = image
 
             poles = self.pole_detector.predict(image=frame)
 
             components = self.components_detector.predict(image=frame,
                                                           pole_predictions=poles)
 
-            # Might not need to do it. Just send components
+            # Might not need to do it. Just send components, don't care about poles
             detected_objects = {**poles, **components}
 
             if detected_objects:
+                # Send all objects to calculate their relative angles saved as attibutes
+                calculate_angles(components=components,
+                                 frame=frame)
+
                 # Won't be drawing BBs. Remove after testing
-                self.results_manager.draw_bbs(objects_detected=detected_objects,
-                                              image=frame)
+                #self.results_manager.draw_bbs(objects_detected=detected_objects,
+                #                              image=frame)
 
+                self.results_manager.check_aim_assistance(components=components,
+                                                          image=frame)
 
-            cv2.imshow("frame", frame)
+                # TODO: It needs to be a generator, returns angles for each frame? Angles need to be sent
+                # TODO: to the mission's file?! (Anton, Lena)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+                # TODO: Do we need it process just one frame from the correct position? OR multiple?
+
+            #cv2.imshow("frame", frame)
+            cv2.imwrite(f"D:\Desktop\system_output/aim_assistance\img.jpg", frame)
+            #cv2.waitKey(0)
+
+            if image is not None:
                 break
 
-        cap.release()
+        #cap.release()
         cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
 
-    # video
+    # video: Try FPV video you have
     #path_to_data = ''
 
     # image
-    #path_to_data = ''
+    path_to_data = r'D:\Desktop\system_output\TEST_IMAGES\28.jpg'
+    image = cv2.imread(path_to_data)
 
     # webcam
-    path_to_data = 0
+    #path_to_data = 0
+    #video_capture = cv2.VideoCapture(path_to_data)
 
-    video_capture = cv2.VideoCapture(path_to_data)
-
-    AimAssistant().assist(video_capture)
+    AimAssistant().assist(image=image)
 
     # TODO: Interfaces. What triggers it and how
-    # TODO: What it returns. It needs to be a generator right? To get predictions for each frame
     # TODO: Actual angle calculating algorithm
-    # TODO: What to do if multiple objects detected? Camera needs to do it one by one? (Hovers in place?), mark chosen object? (tracking, too complicated)
