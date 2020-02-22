@@ -142,10 +142,14 @@ class ResultsManager:
         font = cv2.FONT_HERSHEY_SIMPLEX
         for image_section, elements in components.items():
             for element in elements:
+
+                # if element.object_name == "dump":
+                #     continue
+
                 #cv2.circle(image, element.BB_centre, 6, colour, 8)
                 cv2.line(image, image_centre, element.BB_centre, (244, 3, 252), 5)
                 cv2.putText(image, str(element.angle_to_get_captured),
-                            element.BB_centre, font, 4, (255, 255, 255), 2, cv2.LINE_AA)
+                            element.BB_centre, font, 0.6, (255, 255, 255), 1, cv2.LINE_AA)
 
         #(str(e) for e in element.angle_to_get_captured)
 

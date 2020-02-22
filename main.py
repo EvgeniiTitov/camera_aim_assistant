@@ -85,7 +85,7 @@ if __name__ == "__main__":
     #path_to_data = ''
 
     # image
-    path_to_data = r'D:\Desktop\system_output\TEST_IMAGES\28.jpg'
+    path_to_data = r'D:\Desktop\system_output\aim_assistance\test2.jpg'
     image = cv2.imread(path_to_data)
 
     # webcam
