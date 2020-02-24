@@ -96,8 +96,16 @@ class ResultsManager:
             for element in elements:
 
                 cv2.line(image, image_centre, element.BB_centre, (0, 255, 0), thickness=2)
+
                 cv2.putText(image, str(element.angle_to_get_captured),
                             element.BB_centre, font, 2, (255, 255, 255), 2, cv2.LINE_AA)
+
+                metadata = "Name:{}, ID:{}, Acc:{}, Diagonal:{}".format(element.object_name,
+                                                                        element.ID,
+                                                                        round(element.confidence, 1),
+                                                                        round(element.diagonal, 1))
+                x, y = element.BB_centre[0], element.BB_centre[1] + 60
+                cv2.putText(image, metadata, (x, y), font, 2, (255, 255, 255), 2, cv2.LINE_AA)
 
     def save_objects_detected(
             self,

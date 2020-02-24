@@ -1,7 +1,9 @@
 from assistant import AimAssistant
 from utils import ResultsManager
 import cv2
+from imutils.video import FPS
 import os
+import numpy as np
 
 # TODO: Object tracking if decide to take average from 1+ frames
 
@@ -17,6 +19,14 @@ def main():
 
     cv2.namedWindow("Frame", cv2.WINDOW_NORMAL)
 
+    output_name = os.path.join(save_path, "video.avi")
+
+    video_writter = cv2.VideoWriter(output_name,
+        cv2.VideoWriter_fourcc("M", "J", "P", "G"),
+        10, (round(video_cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
+             round(video_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))))
+
+    fps = FPS().start()
     while 1:
 
         # TODO: Threads for reading/writing results?
@@ -50,6 +60,14 @@ def main():
         if cv2.waitKey(1) == 27:
             break
 
+        # To write video
+        video_writter.write(image=frame.astype(np.uint8))
+
+        fps.update()
+
+    fps.stop()
+    print("FPS: {:.2f}".format(fps.fps()))
+
     video_cap.release()
     cv2.destroyAllWindows()
 
@@ -57,8 +75,8 @@ def main():
 if __name__ == "__main__":
     save_path = r'D:\Desktop\system_output\aim_assistance'
 
-    source = 0
-    #source = r'D:\Desktop\Reserve_NNs\Datasets\IMAGES_ROW_DS\videos_Oleg\Some_Videos\1.mp4'
+    #source = 0
+    source = r'D:\Desktop\Reserve_NNs\Datasets\IMAGES_ROW_DS\videos_Oleg\Some_Videos\1.mp4'
 
     #source = r'D:\Desktop\system_output\aim_assistance\test2.jpg'
     #source = r'D:\Desktop\system_output\TEST_IMAGES\28.JPG'

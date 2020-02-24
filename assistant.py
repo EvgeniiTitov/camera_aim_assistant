@@ -106,7 +106,7 @@ class AimAssistant:
                 element.ID = object_id
                 object_id += 1
 
-                # ?
+                # Estimate object's relative diameter
                 element_BB_diagonal = math.sqrt((element_absolute_top - element_absolute_bot)**2 +\
                                      (element_absolute_right - element_absolute_left)**2)
                 frame_diagonal = math.sqrt((frame.shape[0])**2 + (frame.shape[1])**2)
