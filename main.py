@@ -44,9 +44,11 @@ def main():
                           f"ID: {comp.ID}, Diagonal: {round(comp.diagonal, 2)}")
 
 
-        cv2.imwrite(os.path.join(save_path, "test.jpg"), frame)
-        #cv2.imshow("Frame", frame)
-        #cv2.waitKey(0)
+        #cv2.imwrite(os.path.join(save_path, "test.jpg"), frame)
+
+        cv2.imshow("Frame", frame)
+        if cv2.waitKey(1) == 27:
+            break
 
     video_cap.release()
     cv2.destroyAllWindows()
@@ -55,11 +57,11 @@ def main():
 if __name__ == "__main__":
     save_path = r'D:\Desktop\system_output\aim_assistance'
 
-    #source = 0
+    source = 0
     #source = r'D:\Desktop\Reserve_NNs\Datasets\IMAGES_ROW_DS\videos_Oleg\Some_Videos\1.mp4'
 
     #source = r'D:\Desktop\system_output\aim_assistance\test2.jpg'
     #source = r'D:\Desktop\system_output\TEST_IMAGES\28.JPG'
-    source = r'D:\Desktop\system_output\TEST_IMAGES\DSCN2863.JPG'
+    #source = r'D:\Desktop\system_output\TEST_IMAGES\DSCN2863.JPG'
 
     main()
