@@ -21,6 +21,9 @@ class DetectedObject:
         self.BB_right = right
         self.BB_bottom = bottom
 
+        # For aim assisting purposes
+        self.ID = 0
+        self.diagonal = 0
         self.BB_centre = None
         self.angle_to_get_captured = None
 
