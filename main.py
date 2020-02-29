@@ -19,7 +19,7 @@ def main():
 
     cv2.namedWindow("Frame", cv2.WINDOW_NORMAL)
 
-    output_name = os.path.join(save_path, "video.avi")
+    output_name = os.path.join(save_path, "test_1.avi")
 
     video_writter = cv2.VideoWriter(output_name,
         cv2.VideoWriter_fourcc("M", "J", "P", "G"),
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     save_path = r'D:\Desktop\system_output\aim_assistance'
 
     #source = 0
-    source = r'D:\Desktop\Reserve_NNs\Datasets\IMAGES_ROW_DS\videos_Oleg\Some_Videos\1.mp4'
+    source = r'D:\Desktop\Reserve_NNs\Datasets\raw_data\videos_Lemekh\test_trims\27-28_test_2.mp4'
 
     #source = r'D:\Desktop\system_output\aim_assistance\test2.jpg'
     #source = r'D:\Desktop\system_output\TEST_IMAGES\28.JPG'

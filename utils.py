@@ -48,9 +48,9 @@ class ResultsManager:
 
                 # Check element class and change BBs colour
                 if element.object_name == "insl":
-                    colour = (210, 0, 210)
+                    colour = (0, 255, 0)
                 elif element.object_name == "dump":
-                    colour = (255, 0, 0)
+                    colour = (0, 255, 0)
                 elif element.object_name == "pillar":
                     colour = (0, 128, 255)
 
@@ -103,9 +103,9 @@ class ResultsManager:
                 metadata = "Name:{}, ID:{}, Acc:{}, Diagonal:{}".format(element.object_name,
                                                                         element.ID,
                                                                         round(element.confidence, 1),
-                                                                        round(element.diagonal, 1))
+                                                                        round(element.diagonal, 2))
                 x, y = element.BB_centre[0], element.BB_centre[1] + 60
-                cv2.putText(image, metadata, (x, y), font, 2, (255, 255, 255), 2, cv2.LINE_AA)
+                cv2.putText(image, metadata, (x, y), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
     def save_objects_detected(
             self,
