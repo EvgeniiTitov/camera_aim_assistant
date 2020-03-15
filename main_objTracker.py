@@ -16,6 +16,18 @@ import sys
 We reinstantiate trackers every N frames, but they do not do actual object 
 tracking in a sense they do not tell if an object on frame N is the same as 
 the object on the frame N + 10. This tracking is done by CentroidTracker
+
+1. Processing pools, so that you do not spawn a new process for each new object to track
+Create N of cores - 1 processes, leaving 1 core for the main system. Each process should perform
+multiple object tracking maintaining a list of object trackers
+
+2. Cleanup processes and Qs. In the event dlib reports an object as lost or disappeared, we are
+not returning from the create_tracker() function, implying that that process will live for the life
+of the parent script
+    2.1 Change create_tracker() to return once dlib reports the object as lost
+    2.2 Delete the inputQ and outputQ for the corresponding process as well
+    
+
 """
 
 def parse_arguments():
@@ -24,7 +36,7 @@ def parse_arguments():
     parser.add_argument("--save_path", type=str, help="Path to save processed video stream")
     parser.add_argument("--source", default="0",
                         help="video source to process: video path or webcam (0)")
-    parser.add_argument("--skip", default=15, type=int, help="How often a NN is run")
+    parser.add_argument("--skip", default=10, type=int, help="How often a NN is run")
 
     return parser.parse_args()
 
@@ -104,7 +116,7 @@ def main():
 
         if writer is None and args.save_path:
             fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-            writer = cv2.VideoWriter(args.save_path, fourcc, 30,
+            writer = cv2.VideoWriter(args.save_path + "\out.avi", fourcc, 30,
                                      (frame.shape[1], frame.shape[0]), True)
 
         # List of BB returned by either (1) running a NN or (2) object tracker
